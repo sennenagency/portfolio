@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENNEN | 2026 Portfolio</title>
+    
+    <!-- Fuentes Premium: Inter para todo (Estilo Apple) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #000000;
+            --txt: #ffffff;
+            --accent: #111111;
+            --glass: rgba(255, 255, 255, 0.05);
+            --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--txt);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* Font stack nativo Apple */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- HERO: PORTADA LIMPIA (Estilo Editorial) --- */
+        .hero-container {
+            width: 100%;
+            height: 85vh; /* Un poco más pequeña que 100vh */
+            padding: 20px; /* Margen alrededor (Inset) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 12px; /* Redondeo sutil Apple */
+            position: relative;
+        }
+
+        .hero-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%); /* Elegancia B&N */
+            transition: transform 1.5s var(--ease);
+        }
+
+        /* Efecto sutil al pasar el mouse por la portada */
+        .hero-image-wrapper:hover .hero-bg {
+            transform: scale(1.02); 
+            filter: grayscale(0%);
+        }
+
+        /* --- TÍTULOS DE SECCIÓN --- */
+        .section-header {
+            padding: 4rem 20px 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--accent);
+            margin: 0 20px;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: #fff;
+        }
+
+        .section-meta {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* --- MOTION REELS (AUTO-SCROLL INFINITO) --- */
+        .marquee-wrapper {
+            width: 100%;
+            overflow: hidden;
+            padding: 2rem 0 4rem 0;
+            background: var(--bg);
+            position: relative;
+        }
+
+        /* Degradados laterales para suavizar la entrada/salida */
+        .marquee-wrapper::before, .marquee-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .marquee-wrapper::before { left: 0; background: linear-gradient(to right, #000, transparent); }
+        .marquee-wrapper::after { right: 0; background: linear-gradient(to left, #000, transparent); }
+
+        .marquee-track {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+            animation: scroll 60s linear infinite; /* Movimiento constante */
+        }
+
+        /* Pausar scroll al hacer hover para poder hacer click */
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Se mueve la mitad (el set original) y reinicia */
+        }
+
+        /* TARJETA DE VIDEO (REELS 9:16) */
+        .reel-card {
+            width: 280px; /* Ancho fijo para mantener ritmo */
+            aspect-ratio: 9/16; /* Formato Vertical */
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #111;
+            cursor: pointer;
+            transition: transform 0.4s var(--ease);
+        }
+
+        .reel-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.4s;
+        }
+
+        .reel-card:hover {
+            transform: scale(0.98); /* Toque táctil */
+        }
+        .reel-card:hover video {
+            opacity: 1;
+        }
+
+        /* --- GRID FOTOS (Masonry Style 9:16 & 4:4) --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 20px 4rem 20px;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            background: #111;
+        }
+        
+        /* Clase para fotos cuadradas (1:1) */
+        .aspect-square { aspect-ratio: 1/1; }
+        /* Clase para fotos verticales (9:16) */
+        .aspect-vertical { aspect-ratio: 9/16; }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s ease, transform 0.7s var(--ease);
+        }
+
+        .photo-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        /* --- LIGHTBOX (Visor) --- */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active { opacity: 1; pointer-events: all; }
+
+        .close-lb {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            font-weight: 300;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .close-lb:hover { opacity: 1; }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 1px solid var(--accent);
+            padding: 3rem 20px;
+            display: flex;
+            justify-content: space-between;
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-container { height: 60vh; padding: 10px; }
+            .reel-card { width: 200px; } /* Más pequeños en móvil */
+            .gallery-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HERO (PORTADA LIMPIA) -->
+    <div class="hero-container">
+        <div class="hero-image-wrapper">
+            <!-- Usa tu archivo portada.png -->
+            <img src="portada.png" class="hero-bg" alt="Cover" onerror="this.style.backgroundColor='#1a1a1a'">
+        </div>
+    </div>
+
+    <!-- 2. REELS (SCROLL AUTOMÁTICO 9:16) -->
+    <div class="section-header">
+        <div class="section-title">Motion Reels</div>
+        <div class="section-meta">Auto-Play</div>
+    </div>
+
+    <div class="marquee-wrapper">
+        <div class="marquee-track">
+            <!-- SET 1 (Originales) -->
+            <!-- Sin atributo 'poster', se mostrará el primer frame del video -->
+            <div class="reel-card" onclick="openLightbox('video', 'video1.mp4')">
+                <video src="video1.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video2.mp4')">
+                <video src="video2.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video3.mp4')">
+                <video src="video3.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video4.mp4')">
+                <video src="video4.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video5.mp4')">
+                <video src="video5.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video6.mp4')">
+                <video src="video6.mp4" loop muted playsinline></video>
+            </div>
+
+            <!-- SET 2 (Clones para loop infinito) -->
+            <!-- Duplicar exactamente los mismos videos -->
+            <div class="reel-card" onclick="openLightbox('video', 'video1.mp4')">
+                <video src="video1.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video2.mp4')">
+                <video src="video2.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video3.mp4')">
+                <video src="video3.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video4.mp4')">
+                <video src="video4.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video5.mp4')">
+                <video src="video5.mp4" loop muted playsinline></video>
+            </div>
+            <div class="reel-card" onclick="openLightbox('video', 'video6.mp4')">
+                <video src="video6.mp4" loop muted playsinline></video>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. STILLS (FOTOS 9:16 Y 4:4) -->
+    <div class="section-header">
+        <div class="section-title">Selected Stills</div>
+        <div class="section-meta">2026 Collection</div>
+    </div>
+
+    <div class="gallery-grid">
+        <!-- Mezcla de formatos vertical y cuadrado -->
+        
+        <!-- Foto 1 (Vertical) -->
+        <div class="photo-card aspect-vertical" onclick="openLightbox('image', 'foto1.png')">
+            <img src="foto1.png" onerror="this.src='https://via.placeholder.com/450x800/222/444?text=9:16'">
+        </div>
+
+        <!-- Foto 2 (Cuadrada) -->
+        <div class="photo-card aspect-square" onclick="openLightbox('image', 'foto2.png')">
+            <img src="foto2.png" onerror="this.src='https://via.placeholder.com/600x600/222/444?text=1:1'">
+        </div>
+
+        <!-- Foto 3 (Vertical) -->
+        <div class="photo-card aspect-vertical" onclick="openLightbox('image', 'foto3.png')">
+            <img src="foto3.png" onerror="this.src='https://via.placeholder.com/450x800/222/444?text=9:16'">
+        </div>
+
+        <!-- Foto 4 (Vertical) -->
+        <div class="photo-card aspect-vertical" onclick="openLightbox('image', 'foto4.png')">
+            <img src="foto4.png" onerror="this.src='https://via.placeholder.com/450x800/222/444?text=9:16'">
+        </div>
+
+        <!-- Foto 5 (Cuadrada) -->
+        <div class="photo-card aspect-square" onclick="openLightbox('image', 'foto5.png')">
+            <img src="foto5.png" onerror="this.src='https://via.placeholder.com/600x600/222/444?text=1:1'">
+        </div>
+
+        <!-- Foto 6 (Cuadrada) -->
+        <div class="photo-card aspect-square" onclick="openLightbox('image', 'foto6.png')">
+            <img src="foto6.png" onerror="this.src='https://via.placeholder.com/600x600/222/444?text=1:1'">
+        </div>
+    </div>
+
+    <footer>
+        <div>Sennen Agency ©</div>
+        <div>Madrid, ES</div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <div class="close-lb">✕</div>
+        <div id="lb-content"></div>
+    </div>
+
+    <script>
+        // HOVER AUTOPLAY PARA REELS
+        // Aunque se mueven, al pasar el mouse se pausan y reproducen
+        const reels = document.querySelectorAll('.reel-card video');
+        
+        reels.forEach(video => {
+            video.parentElement.addEventListener('mouseenter', () => {
+                video.play().catch(()=>{});
+            });
+            video.parentElement.addEventListener('mouseleave', () => {
+                video.pause();
+                // video.currentTime = 0; // Descomentar si quieres que reinicie
+            });
+        });
+
+        // LIGHTBOX LOGIC
+        function openLightbox(type, src) {
+            const lb = document.getElementById('lightbox');
+            const content = document.getElementById('lb-content');
+            
+            if(type === 'video') {
+                content.innerHTML = `<video src="${src}" controls autoplay style="max-height: 85vh; max-width: 90vw; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);"></video>`;
+            } else {
+                content.innerHTML = `<img src="${src}" style="max-height: 90vh; max-width: 90vw; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">`;
+            }
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('lb-content').innerHTML = '';
+            }, 300);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
